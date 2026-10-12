@@ -18,6 +18,11 @@ public class Tube : MonoBehaviour
         
     }
 
+    void OnMouseDown()
+    {
+        GameManager.Instance.OnTubeClicked(this);
+    }
+    
     public int Peek()
     {
         // return the color on top, without removing it
