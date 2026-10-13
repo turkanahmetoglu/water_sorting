@@ -4,10 +4,15 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     private Tube selectedTube;
+
+    void Awake()
+    {
+        Instance = this;
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Instance = this;
+        
     }
 
     // Update is called once per frame
@@ -26,6 +31,15 @@ public class GameManager : MonoBehaviour
         else if (clicked == selectedTube){
             selectedTube = null;
             Debug.Log("deselect");
+        }
+        else
+        {
+            if (selectedTube.CanPour(clicked))
+            {
+                selectedTube.PourInto(clicked);
+            }
+            selectedTube = null;
+            Debug.Log(clicked.colors.Count);
         }
     }
 }

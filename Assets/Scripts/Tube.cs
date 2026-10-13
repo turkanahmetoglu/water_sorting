@@ -9,7 +9,8 @@ public class Tube : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        colors.Push(0);
+        colors.Push(1);
     }
 
     // Update is called once per frame
