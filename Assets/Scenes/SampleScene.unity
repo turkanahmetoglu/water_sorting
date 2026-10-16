@@ -196,6 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3342bf2d5cb7cec498755d6cba4caf7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tube
+  unitPrefab: {fileID: 6337217863469731734, guid: b78700be5d4101f4cae71295bbfaf760, type: 3}
 --- !u!212 &230649190
 SpriteRenderer:
   serializedVersion: 3
@@ -538,6 +539,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 293c2c2a0a9ed0e41963392313228d0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  tubes:
+  - {fileID: 1630820612}
+  - {fileID: 230649189}
+  palette:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  - {r: 1, g: 0.07843138, b: 0.5764706, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
 --- !u!4 &1278349308
 Transform:
   m_ObjectHideFlags: 0
@@ -630,6 +641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3342bf2d5cb7cec498755d6cba4caf7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tube
+  unitPrefab: {fileID: 6337217863469731734, guid: b78700be5d4101f4cae71295bbfaf760, type: 3}
 --- !u!212 &1630820613
 SpriteRenderer:
   serializedVersion: 3

@@ -6,11 +6,12 @@ public class Tube : MonoBehaviour
 {
     public Stack<int> colors = new Stack<int>();
     private int MaxCapacity = 4;
+    public GameObject unitPrefab;
+    private List<GameObject> units = new List<GameObject>();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        colors.Push(0);
-        colors.Push(1);
+        
     }
 
     // Update is called once per frame
@@ -89,6 +90,26 @@ public class Tube : MonoBehaviour
         {
             int moved = colors.Pop();
             target.colors.Push(moved);
+        }
+    }
+
+    public void Redraw()
+    {
+        foreach(GameObject unit in units)
+        {
+            Destroy(unit);
+        }
+        units.Clear();
+
+        int[] arr = colors.ToArray();
+        System.Array.Reverse(arr);
+
+        for(int i = 0; i<arr.Length; i++)
+        {
+            Vector3 position = new (transform.position.x, transform.position.y - 2f + 0.5f + i);
+            GameObject square = Instantiate(unitPrefab, position, Quaternion.identity);
+            square.GetComponent<SpriteRenderer>().color = GameManager.Instance.palette[arr[i]];
+            units.Add(square);
         }
     }
 
