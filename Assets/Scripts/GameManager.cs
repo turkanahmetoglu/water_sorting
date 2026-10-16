@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Rendering;
-using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -58,7 +56,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RestartLevel();
+        }
     }
 
     public void OnTubeClicked(Tube clicked)
@@ -84,8 +85,8 @@ public class GameManager : MonoBehaviour
                     Debug.Log("You win!");
                     NextLevel();
                 }
-                
             }
+            Debug.Log("can't pour");
             selectedTube = null;
             //Debug.Log(clicked.colors.Count);
         }
@@ -133,6 +134,18 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("All levels complete!");
+        }
+    }
+
+    public void RestartLevel()
+    {
+        // reload the level you're on
+        LoadLevel(currentLevel);
+
+        // also clear any tube the player had selected
+        if (selectedTube)
+        {
+            selectedTube = null;
         }
     }
 }
