@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Rendering;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public List<Tube> tubes;
     public Color[] palette;
     private int currentLevel = 0;
+    private bool isAnimating = false;
 
     private int[][][] levels = new int[][][]
     {
@@ -53,6 +54,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         LoadLevel(0);
+        //StartCoroutine(MoveUnit(tubes[0].GetTopUnits(1)[0], tubes[3].SlotPosition(0), 0.3f));
     }
 
     // Update is called once per frame
@@ -70,6 +72,10 @@ public class GameManager : MonoBehaviour
 
     public void OnTubeClicked(Tube clicked)
     {
+        if (isAnimating)
+        {
+            return;
+        }
         if (selectedTube == null)
         {
             selectedTube = clicked;
@@ -88,14 +94,7 @@ public class GameManager : MonoBehaviour
             if (selectedTube.CanPour(clicked))
             {
                 history.Push(TakeSnapshot());
-                selectedTube.PourInto(clicked);
-                selectedTube.Redraw();
-                clicked.Redraw();
-                if (CheckWin())
-                {
-                    Debug.Log("You win!");
-                    NextLevel();
-                }
+                StartCoroutine(PourRoutine(selectedTube, clicked));
             }
             //Debug.Log("can't pour");
             selectedTube.SetSelected(false);
@@ -152,6 +151,11 @@ public class GameManager : MonoBehaviour
 
     public void RestartLevel()
     {
+        if (isAnimating)
+        {
+            return;
+        }
+
         // reload the level you're on
         LoadLevel(currentLevel);
 
@@ -176,6 +180,11 @@ public class GameManager : MonoBehaviour
 
     public void Undo()
     {
+        if (isAnimating)
+        {
+            return;
+        }
+
         if (selectedTube)
         {
             selectedTube.SetSelected(false);
@@ -197,6 +206,50 @@ public class GameManager : MonoBehaviour
                 tubes[i].Redraw();
             }
 
+        }
+    }
+
+    IEnumerator MoveUnit(GameObject unit, Vector3 destination, float duration)
+    {
+        Vector3 start = unit.transform.position;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            unit.transform.position = Vector3.Lerp(start, destination, t / duration);
+            yield return null;
+        }
+
+        unit.transform.position = destination;
+    }
+
+    IEnumerator PourRoutine(Tube from, Tube to)
+    {
+        isAnimating = true;
+        float duration = 0.3f;
+
+        int count = from.CountToPour(to);
+        List<GameObject> units = from.GetTopUnits(count);
+        int startSlot = to.colors.Count;
+
+        for (int k = 0; k < count; k++)
+        {
+            StartCoroutine(MoveUnit(units[count - 1 - k], to.SlotPosition(startSlot + k), duration));
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        from.PourInto(to);
+        from.Redraw();
+        to.Redraw();
+
+        isAnimating = false;
+
+        if (CheckWin())
+        {
+            Debug.Log("You win!");
+            NextLevel();
         }
     }
 }

@@ -73,20 +73,9 @@ public class Tube : MonoBehaviour
 
     public void PourInto(Tube target)
     {
-        // 1. figure out how many matching-color units are on top of this tube
-        int matchingColor = 0;
-        foreach (int color in colors)
-        {
-            if(Peek() == color) matchingColor++;
-            else break;
-        }
-        // 2. figure out how much room is left in target
-        int leftSpaceTarget = target.MaxCapacity - target.colors.Count;
+        int moveCount = CountToPour(target);
 
-        // 3. move the smaller of those two counts, one unit at a time, from this tube to target
-        
-
-        for (int i = 0; i < Math.Min(matchingColor, leftSpaceTarget); i++ )
+        for (int i = 0; i < moveCount; i++ )
         {
             int moved = colors.Pop();
             target.colors.Push(moved);
@@ -106,11 +95,13 @@ public class Tube : MonoBehaviour
 
         for(int i = 0; i<arr.Length; i++)
         {
-            Vector3 position = new (transform.position.x, transform.position.y - 2f + 0.5f + i);
+            Vector3 position = SlotPosition(i);
             GameObject square = Instantiate(unitPrefab, position, Quaternion.identity);
             square.GetComponent<SpriteRenderer>().color = GameManager.Instance.palette[arr[i]];
             units.Add(square);
         }
+
+        
     }
 
     public void SetSelected(bool selected)
@@ -120,5 +111,31 @@ public class Tube : MonoBehaviour
             GetComponent<SpriteRenderer>().color = Color.yellow;
         }
         else GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
+    public int CountToPour(Tube target)
+    {
+        int matchingColor = 0;
+        foreach (int color in colors)
+        {
+            if(Peek() == color) matchingColor++;
+            else break;
+        }
+
+        int leftSpaceTarget = target.MaxCapacity - target.colors.Count;
+
+        return Math.Min(matchingColor, leftSpaceTarget);
+    }
+
+    public Vector3 SlotPosition(int slot)
+    {
+        // return the world position of slot number
+        Vector3 position = new (transform.position.x, transform.position.y - 2f + 0.5f + slot);
+        return position;
+    }
+
+    public List<GameObject> GetTopUnits(int count)
+    {
+        return units.GetRange(units.Count - count, count);
     }
 }
