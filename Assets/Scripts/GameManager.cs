@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
+    private Stack<int[][]> history = new Stack<int[][]>();
     public static GameManager Instance;
     private Tube selectedTube;
     public List<Tube> tubes;
@@ -60,6 +62,10 @@ public class GameManager : MonoBehaviour
         {
             RestartLevel();
         }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Undo();
+        }
     }
 
     public void OnTubeClicked(Tube clicked)
@@ -67,9 +73,13 @@ public class GameManager : MonoBehaviour
         if (selectedTube == null)
         {
             selectedTube = clicked;
+            clicked.SetSelected(true);
+            
+            
             Debug.Log("select");
         }
         else if (clicked == selectedTube){
+            selectedTube.SetSelected(false);
             selectedTube = null;
             Debug.Log("deselect");
         }
@@ -77,6 +87,7 @@ public class GameManager : MonoBehaviour
         {
             if (selectedTube.CanPour(clicked))
             {
+                history.Push(TakeSnapshot());
                 selectedTube.PourInto(clicked);
                 selectedTube.Redraw();
                 clicked.Redraw();
@@ -86,7 +97,8 @@ public class GameManager : MonoBehaviour
                     NextLevel();
                 }
             }
-            Debug.Log("can't pour");
+            //Debug.Log("can't pour");
+            selectedTube.SetSelected(false);
             selectedTube = null;
             //Debug.Log(clicked.colors.Count);
         }
@@ -107,6 +119,7 @@ public class GameManager : MonoBehaviour
     void LoadLevel(int index)
     {
         currentLevel = index;
+        history.Clear();
         for (int i=0; i<tubes.Count; i++)
         {
             tubes[i].colors.Clear();
@@ -142,10 +155,48 @@ public class GameManager : MonoBehaviour
         // reload the level you're on
         LoadLevel(currentLevel);
 
-        // also clear any tube the player had selected
+        // clear any tube the player had selected
         if (selectedTube)
         {
+            selectedTube.SetSelected(false);
             selectedTube = null;
+        }
+    }
+    int[][] TakeSnapshot()
+    {
+        int[][] snapshot = new int[tubes.Count][];
+        for (int i = 0; i < tubes.Count; i++)
+        {
+            int[] arr = tubes[i].colors.ToArray();
+            System.Array.Reverse(arr);
+            snapshot[i] = arr;
+        }
+        return snapshot;
+    }
+
+    public void Undo()
+    {
+        if (selectedTube)
+        {
+            selectedTube.SetSelected(false);
+            selectedTube = null;
+        }
+        
+        if (history.Count > 0)
+        {
+            int[][] recentSnap = history.Pop();
+            for (int i=0; i<tubes.Count; i++)
+            {
+                tubes[i].colors.Clear();
+
+                foreach (int color in recentSnap[i])
+                {
+                    tubes[i].colors.Push(color);
+                }
+
+                tubes[i].Redraw();
+            }
+
         }
     }
 }

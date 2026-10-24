@@ -113,4 +113,12 @@ public class Tube : MonoBehaviour
         }
     }
 
+    public void SetSelected(bool selected)
+    {
+        if (selected)
+        {
+            GetComponent<SpriteRenderer>().color = Color.yellow;
+        }
+        else GetComponent<SpriteRenderer>().color = Color.white;
+    }
 }
