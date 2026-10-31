@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class GameManager : MonoBehaviour
     public Color[] palette;
     private int currentLevel = 0;
     private bool isAnimating = false;
+    public TMP_Text levelText;
+    public GameObject winPanel;
+    private bool gameFinished = false;
 
     private int[][][] levels = new int[][][]
     {
@@ -44,6 +48,37 @@ public class GameManager : MonoBehaviour
             new int[] { }
         }
 
+                ,
+        // Level 4: 4 colors, 5 tubes
+        new int[][]
+        {
+            new int[] { 0, 2, 1, 3 },
+            new int[] { 2, 0, 1, 3 },
+            new int[] { 1, 2, 0, 3 },
+            new int[] { 1, 2, 0, 3 },
+            new int[] { }
+        },
+
+        // Level 5: 4 colors, 5 tubes
+        new int[][]
+        {
+            new int[] { 0, 2, 1, 3 },
+            new int[] { 1, 3, 2, 1 },
+            new int[] { 0, 2, 0, 3 },
+            new int[] { 3, 1, 2, 0 },
+            new int[] { }
+        },
+
+        // Level 6: 4 colors, 5 tubes
+        new int[][]
+        {
+            new int[] { 0, 3, 1, 2 },
+            new int[] { 0, 1, 3, 2 },
+            new int[] { 0, 3, 0, 1 },
+            new int[] { 3, 2, 1, 2 },
+            new int[] { }
+        }
+
     };
 
     void Awake()
@@ -72,6 +107,7 @@ public class GameManager : MonoBehaviour
 
     public void OnTubeClicked(Tube clicked)
     {
+        if (gameFinished) return;
         if (isAnimating)
         {
             return;
@@ -128,6 +164,7 @@ public class GameManager : MonoBehaviour
                 tubes[i].colors.Push(color);
             }
 
+            levelText.text = "Level " + (index + 1);
             tubes[i].Redraw();
         }
 
@@ -145,12 +182,15 @@ public class GameManager : MonoBehaviour
         // if you ran out of levels, print "All levels complete!" instead
         else
         {
+            winPanel.SetActive(true);
+            gameFinished = true;
             Debug.Log("All levels complete!");
         }
     }
 
     public void RestartLevel()
     {
+        if (gameFinished) return;
         if (isAnimating)
         {
             return;
@@ -180,6 +220,7 @@ public class GameManager : MonoBehaviour
 
     public void Undo()
     {
+        if (gameFinished) return;
         if (isAnimating)
         {
             return;
