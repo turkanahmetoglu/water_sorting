@@ -11,7 +11,7 @@ Sort the board until every tube holds a single color. Undo reverses a
 pour, and Restart resets the level.
 
 ## Features
-- 6 levels, from 3 colors with 2 empty tubes to 4 colors with 1 empty tube
+- From 3 colors with 2 empty tubes to 4 colors with 1 empty tube
 - Undo with full board history, and level restart
 - Animated pours
 - Portrait mobile UI, with a camera that fits the board to any screen width
